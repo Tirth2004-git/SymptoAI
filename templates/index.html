@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SymptoAI - Advanced Disease Prediction Portal</title>
+    <meta name="description" content="Predict potential health conditions using machine learning classifiers based on selected symptoms.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Background Decor Elements -->
+    <div class="decor-blob decor-blob-1"></div>
+    <div class="decor-blob decor-blob-2"></div>
+    <div class="decor-blob decor-blob-3"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse logo-icon"></i>
+                <span class="logo-text">Sympto<span class="logo-highlight">AI</span></span>
+            </div>
+            <p class="tagline">Interactive Machine Learning Diagnosis Predictor</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-content">
+            <!-- Left Side: Config & Inputs -->
+            <section class="control-panel glass-card">
+                <h2><i class="fa-solid fa-notes-medical icon-spacer"></i>1. Select Your Symptoms</h2>
+                <p class="section-desc">Search and select one or more symptoms you are experiencing. You can search or filter by category.</p>
+                
+                <!-- Search & Suggestions -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="symptom-search" placeholder="Type a symptom (e.g., fever, skin rash)..." autocomplete="off">
+                        <button id="clear-search-btn" class="clear-btn" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <!-- Autocomplete suggestions dropdown -->
+                    <div id="suggestions-dropdown" class="suggestions-list" style="display: none;"></div>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="category-filters-container">
+                    <span class="filter-label">Filter by System:</span>
+                    <div id="category-pills" class="category-pills">
+                        <!-- Dynamic category pills go here -->
+                        <button class="category-pill active" data-category="all">All Systems</button>
+                    </div>
+                </div>
+
+                <!-- Active Selections -->
+                <div class="selections-container">
+                    <div class="selections-header">
+                        <span>Selected Symptoms (<span id="selected-count">0</span>)</span>
+                        <button id="clear-all-btn" class="text-btn" style="display: none;">Clear All</button>
+                    </div>
+                    <div id="selected-symptoms-tags" class="selected-tags">
+                        <div class="empty-state">No symptoms selected. Start typing above or choose from the list.</div>
+                    </div>
+                </div>
+
+                <!-- Full List (collapsible or scrollable container) -->
+                <div class="full-list-section">
+                    <button id="toggle-list-btn" class="toggle-btn">
+                        <span>Browse All Symptoms List</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div id="symptoms-grid-container" class="symptoms-grid-wrapper" style="display: none;">
+                        <div id="symptoms-grid" class="symptoms-grid">
+                            <!-- Dynamic symptom checkboxes list -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side: Model Selection & Results -->
+            <section class="results-panel">
+                <!-- Model Config Card -->
+                <div class="model-config glass-card">
+                    <h2><i class="fa-solid fa-sliders icon-spacer"></i>2. Choose AI Model</h2>
+                    <p class="section-desc">Select the machine learning classifier to run prediction.</p>
+                    
+                    <div class="model-cards-grid">
+                        <!-- Random Forest -->
+                        <label class="model-card-label">
+                            <input type="radio" name="ml-model" value="random_forest" checked>
+                            <div class="model-card">
+                                <div class="card-icon"><i class="fa-solid fa-tree"></i></div>
+                                <div class="card-info">
+                                    <h3>Random Forest</h3>
+                                    <p>Ensemble predictor with high robustness and accuracy.</p>
+                                </div>
+                                <div class="card-badge">Rec.</div>
+                            </div>
+                        </label>
+                        
+                        <!-- Gradient Boost -->
+                        <label class="model-card-label">
+                            <input type="radio" name="ml-model" value="gradient_boost">
+                            <div class="model-card">
+                                <div class="card-icon"><i class="fa-solid fa-bolt"></i></div>
+                                <div class="card-info">
+                                    <h3>Gradient Boost</h3>
+                                    <p>Iterative booster targeting weak predictions.</p>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Naive Bayes -->
+                        <label class="model-card-label">
+                            <input type="radio" name="ml-model" value="mnb">
+                            <div class="model-card">
+                                <div class="card-icon"><i class="fa-solid fa-calculator"></i></div>
+                                <div class="card-info">
+                                    <h3>Naive Bayes</h3>
+                                    <p>Probabilistic classifier ideal for categorical features.</p>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Decision Tree -->
+                        <label class="model-card-label">
+                            <input type="radio" name="ml-model" value="decision_tree">
+                            <div class="model-card">
+                                <div class="card-icon"><i class="fa-solid fa-sitemap"></i></div>
+                                <div class="card-info">
+                                    <h3>Decision Tree</h3>
+                                    <p>Entropy-based tree branch node rule decision model.</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <button id="predict-btn" class="primary-btn pulse-glow" disabled>
+                        <span>Analyze Symptoms</span>
+                        <i class="fa-solid fa-arrow-trend-up btn-icon"></i>
+                    </button>
+                </div>
+
+                <!-- Results Output Card -->
+                <div id="results-card" class="results-card glass-card empty-results">
+                    <div id="results-placeholder" class="results-placeholder">
+                        <i class="fa-solid fa-stethoscope placeholder-icon"></i>
+                        <h3>Diagnosis Output</h3>
+                        <p>Select symptoms and click "Analyze Symptoms" to see prediction.</p>
+                    </div>
+
+                    <div id="results-content" class="results-content" style="display: none;">
+                        <span class="result-badge">AI Analysis Complete</span>
+                        <h3 class="result-heading">Predicted Condition</h3>
+                        <h1 id="predicted-disease" class="disease-title">Fungal Infection</h1>
+
+                        <!-- Info Grid -->
+                        <div class="result-metrics">
+                            <div class="metric-box">
+                                <span class="metric-label">Model Used</span>
+                                <span id="res-model-used" class="metric-value">Random Forest</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-label">Confidence Score</span>
+                                <span id="res-confidence" class="metric-value">92.4%</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-label">Symptoms Count</span>
+                                <span id="res-symptoms-count" class="metric-value">4</span>
+                            </div>
+                        </div>
+
+                        <!-- Action/Info -->
+                        <div class="action-alert warning-alert">
+                            <i class="fa-solid fa-triangle-exclamation alert-icon"></i>
+                            <div>
+                                <strong>Disclaimer:</strong> SymptoAI is an AI demo model meant for educational purposes. It does not replace clinical diagnoses from healthcare practitioners. If you feel unwell, consult a doctor immediately.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="results-loader" class="results-loader" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Processing symptom vector through neural branches...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 SymptoAI. Powered by Scikit-Learn Classifiers.</p>
+        </footer>
+    </div>
+
+    <!-- Custom Logic Script -->
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
